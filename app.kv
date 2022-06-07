@@ -1,0 +1,151 @@
+#: import WipeTransition kivy.uix.screenmanager.WipeTransition
+<WindowManager>:
+    transition: WipeTransition()  # There are lots of different transitions, find them here: https://kivy.org/doc/stable/api-kivy.uix.screenmanager.html
+    # Create the different screens
+    Menu:
+    ExampleWidget:
+        id: ew
+
+# Layout for Menu screen
+<Menu>:
+
+    # Screen name, used for switching between screens
+    name: "first"
+
+    # Set canvas for background color. To use an img, add 'source: '/location'' to Rectangle
+    canvas:
+        Color:
+            rgba: 1, 1, 1, 1
+        # Rectangle is the background
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    # Button to start the game/quiz
+    Button:
+        # Widget ID
+	    id: start_button
+        text: "Start"
+        font_size: 32
+        on_press: app.root.current = "second"  # Code is excecuted when button is released. Can also use 'on_press' or 'on_state'
+        size_hint: .4, .1  # Widget size in relation with the percentage of the parent widget's size
+        pos_hint: {'center_x':.5, 'center_y':.5}  # Widget size in relation with the percentage of the parent widget's size
+
+
+# Widget containing game/quiz
+<ExampleWidget>:
+    id: ExampleWidget
+    name: 'second'
+    maincolor: ExampleWidget.maincolor
+    start_game: start_game
+    time: 0
+    # Unrestricted layout type, mainly used with pos_hint and size_hint
+    FloatLayout:
+        # Set canvas for background color. To use an img, add 'source: '/location'' to Rectangle
+        canvas:
+            Color:
+                rgba: ExampleWidget.maincolor
+            Rectangle:
+                size: root.size
+                pos: root.pos
+        Button:
+            size: root.size
+            background_color: 0, 0, 0, 0
+            on_press: ExampleWidget.ColorChange()
+        Label:
+            id: score
+            text: str(round(ExampleWidget.time))
+            pos_hint: {'center_x':.5, 'center_y':.725}
+            size_hint: 1, 0.1
+            bold: True
+            font_size: self.width/25
+            canvas.before:
+                Color:
+                    rgba: (1 - ExampleWidget.maincolor[0], 1 - ExampleWidget.maincolor[1], 1 - ExampleWidget.maincolor[2], 1)
+                RoundedRectangle:
+                    size: (score.width/4, score.height)
+                    pos: score.pos
+
+
+        # Labels are used for displaying text
+        Label:
+            # Widget ID used for accesing widget from withing the .py file
+            id: origin_word
+            text: ExampleWidget.df['Estonian'][(ExampleWidget.word_order[0])] # This string will be updated in the .py file
+            pos_hint: {'center_x':.5, 'center_y':.55}
+            bold: True
+            font_size: 72
+
+
+
+        TextInput:
+            id: input
+            size_hint: .6, .15
+            pos_hint: {'center_x':.5, 'center_y':.4}
+            font_size: 65
+            multiline: False
+            on_text_validate: ExampleWidget.on_enter()  # Textinput will unfocus on enter, and code will be excecuted
+            background_color: 0, 0, 0, 0
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, .5)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+
+        # Button for proceeding to next word
+        Button:
+            id: next
+            size_hint: .1, .15
+            pos_hint: {'center_x':.75, 'center_y':.4}
+            background_color: 0, 0, 0, 0
+            font_size: 72
+            text: '>'
+            bold: True
+            disabled: True  # Disabled untill correct answer is given
+            on_release: ExampleWidget.next_word()
+            canvas.before:
+                Color:
+                    rgba: (0, 0, 0, 0) if self.disabled==True else (0, .7, 0, .8)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+
+        Button:
+            # Widget ID used for accesing widget from withing the .py file
+            id: start_game
+            text: 'start'
+            pos_hint: {'x':.1, 'center_y':.95}
+            size_hint: .2, .1
+            bold: True
+            font_size: 56
+            background_color: (0, 0, 0, 0)
+            on_release:  ExampleWidget.start()
+            canvas.before:
+                Color:
+                    rgba: (1 - ExampleWidget.maincolor[0], 1 - ExampleWidget.maincolor[1], 1 - ExampleWidget.maincolor[2], 1)
+                RoundedRectangle:
+                    size:self.size
+                    pos:self.pos
+
+        Label:
+            text: '>'
+            bold: True
+            pos_hint: {'center_x':.5, 'center_y':.835}
+            font_size: 75
+            canvas.before:
+                Color:
+                    rgba: (1, 1, 1, .5)
+                RoundedRectangle:
+                    size: (self.width/3), (self.height/8)
+                    pos: (self.width/3.02), (self.height/1.3)
+
+        Image:
+            source: '120x90/ee.png'
+            pos_hint: {'center_x':.4, 'center_y':.83}
+            size_hint: .075, .2
+
+        Image:
+            source: '120x90/nl.png'
+            pos_hint: {'center_x':.6, 'center_y':.83}
+            size_hint: .075, .2
+
