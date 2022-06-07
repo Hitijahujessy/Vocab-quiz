@@ -14,6 +14,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 import pandas as pd
 import random
 from gtts import gTTS
+from kivy.core.audio import SoundLoader
 
 # Import Kivy Layout
 root_widget = Builder.load_file('app.kv')
@@ -30,6 +31,8 @@ class ExampleWidget(Screen):
     paused = False
     stop = False
     start_game = ObjectProperty()
+    origin_language = 'Estonian'
+    input_language = 'Dutch'
 
     def __init__(self, **kwargs):
 
@@ -112,6 +115,12 @@ class ExampleWidget(Screen):
         self.ids.input.text = ''  # Clear text input widget
         self.ids.origin_word.color = (1, 1, 1)  # Set textlabel color to white (RGB)
         self.ids.origin_word.text = self.df['Estonian'][(self.word_order[self.i])]  # Set textlabel text to new word
+
+    def play_sound(self):
+        myobj = gTTS(text=self.ids.origin_word.text, lang='et', slow=False)
+        myobj.save("word.mp3")
+        sound = SoundLoader.load('word.mp3')
+        sound.play()
 
     def ColorChange(self):
         self.maincolor = (random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 1), 1)

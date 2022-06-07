@@ -20,6 +20,51 @@
         Rectangle:
             pos: self.pos
             size: self.size
+
+    ScrollView:
+        pos_hint: {'center_x':.575, 'center_y':.25}
+        size_hint: .4, .075
+        do_scroll_x: True
+        do_scroll_y: False
+        BoxLayout:
+            id: boxlayout
+            size_hint_x: None
+            width: root.width
+
+            Button:
+                on_release: ExampleWidget.origin_language = 'Estonian'
+                size_hint: .25, .60
+                background_color: 0, 0, 0, 0
+                canvas.after:
+                    Color:
+                        rgba: 1, 1, 1, 1
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                        source: '120x90/ee.png'
+            Button
+            Button
+            Button
+            Button
+            Button
+
+    ScrollView:
+        pos_hint: {'center_x':.575, 'center_y':.1}
+        size_hint: .4, .075
+        do_scroll_x: True
+        do_scroll_y: False
+        BoxLayout:
+            id: boxlayout
+            size_hint_x: None
+            width: root.width
+            Button
+            Button
+            Button
+            Button
+            Button
+            Button
+
+
     # Button to start the game/quiz
     Button:
         # Widget ID
@@ -148,4 +193,14 @@
             source: '120x90/nl.png'
             pos_hint: {'center_x':.6, 'center_y':.83}
             size_hint: .075, .2
+
+        Button:
+            size_hint: .1, .15
+            on_release: ExampleWidget.play_sound()
+            background_color: 0, 0, 0, 0
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1
+                Rectangle:
+                    source: 'sound.png'
 
