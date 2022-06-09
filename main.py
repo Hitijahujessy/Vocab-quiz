@@ -30,18 +30,16 @@ class ExampleWidget(Screen):
     i = 0  # Used for proceeding to next word
     maincolor = ObjectProperty((.25, .6, 1, 1))
     time = NumericProperty(0)
-    paused = False
-    stop = False
     start_game = ObjectProperty()
 
     origin_language = 'English'
-    origin_flag = 'gb'
-    origin_flag_source = '120x90/' + origin_flag + '.png'
+    origin_flag = ObjectProperty()
+    origin_flag = '120x90/gb.png'
     origin_sound = 'en'
 
     input_language = 'Dutch'
-    input_flag = 'nl'
-    input_flag_source = '120x90/' + input_flag + '.png'
+    input_flag = ObjectProperty()
+    input_flag = '120x90/nl.png'
 
 
 
@@ -68,7 +66,7 @@ class ExampleWidget(Screen):
                 else:
                     self.word_order.append(
                         number)  # If chosen number does not exist in word_order list, append it to the list.
-                    print(self.word_order)  # Print the word_order list to check if everything works
+                    # print(self.word_order)  # Print the word_order list to check if everything works
                     break
 
         # Keeping time
@@ -87,6 +85,17 @@ class ExampleWidget(Screen):
         Clock.schedule_interval(self.increment_time, .1)
 
         self.ids.origin_word.text = self.df[self.origin_language][(self.word_order[self.i])]
+
+        self.ids.origin_icon.source = self.origin_flag
+        self.ids.origin_icon.color = (1, 1, 1, 1)
+
+        self.ids.input_icon.source = self.input_flag
+        self.ids.input_icon.color = (1, 1, 1, 1)
+
+        self.ids.sound_button.disabled = False
+
+        self.ids.start_game.disabled = True
+
 
     def stop(self):
 
@@ -137,6 +146,32 @@ class ExampleWidget(Screen):
     def ColorChange(self):
         self.maincolor = (random.uniform(0, 1), random.uniform(0, 1), random.uniform(0, 1), 1)
         print(self.maincolor)
+
+    def reload(self):
+        self.stop()
+
+
+        self.ids.sound_button.disabled = True
+
+        self.ids.next.disabled = True  # Button for proceeding to next word will be disabled
+        self.ids.input.text = ''  # Clear text input widget
+        self.ids.origin_word.text = ''
+        self.ids.origin_word.color = (1, 1, 1)  # Set textlabel color to white (RGB)
+
+        self.word_order = []  # Will be used to prevent duplicate words and to randomize the order of words
+        self.i = 0  # Used for proceeding to next word
+        self.time = 0
+
+        self.ids.start_game.disabled = False
+
+        self.ids.origin_icon.source = self.origin_flag
+        self.ids.origin_icon.color = (0, 0, 0, 0)
+
+        self.ids.input_icon.source = self.input_flag
+        self.ids.input_icon.color = (0, 0, 0, 0)
+
+        self.set_wordlist()
+
 
 
 # Menu screen class
