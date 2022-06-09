@@ -1,12 +1,14 @@
 import os
+import sys
 
 from kivy.clock import Clock
 
-os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
+# os.environ['KIVY_GL_BACKEND'] = 'angle_sdl2'
 
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.properties import NumericProperty, ObjectProperty
+from kivy.uix.dropdown import DropDown
 from kivy.uix.popup import Popup
 
 from kivy.uix.boxlayout import BoxLayout
@@ -31,8 +33,17 @@ class ExampleWidget(Screen):
     paused = False
     stop = False
     start_game = ObjectProperty()
-    origin_language = 'Estonian'
+
+    origin_language = 'English'
+    origin_flag = 'gb'
+    origin_flag_source = '120x90/' + origin_flag + '.png'
+    origin_sound = 'en'
+
     input_language = 'Dutch'
+    input_flag = 'nl'
+    input_flag_source = '120x90/' + input_flag + '.png'
+
+
 
     def __init__(self, **kwargs):
 
@@ -45,12 +56,12 @@ class ExampleWidget(Screen):
     def set_wordlist(self):
 
         # For-loop to set word order
-        for x in range(len(self.df['English'])):
+        for x in range(len(self.df[self.origin_language])):
 
             # While-loop to prevent duplicates in word_order list
             while True:
                 number = random.randint(0, (
-                            len(self.df['English']) - 1))  # Random number between 0 and length of wordlist is chosen
+                            len(self.df[self.origin_language]) - 1))  # Random number between 0 and length of wordlist is chosen
 
                 if number in self.word_order:
                     continue  # If chosen number already exists in word_order list, continue the loop
@@ -74,6 +85,8 @@ class ExampleWidget(Screen):
         # Keeping time
         self.time = 0
         Clock.schedule_interval(self.increment_time, .1)
+
+        self.ids.origin_word.text = self.df[self.origin_language][(self.word_order[self.i])]
 
     def stop(self):
 
@@ -99,7 +112,7 @@ class ExampleWidget(Screen):
         if self.ids.input.text == '':
             pass
         # If answer is correct
-        elif self.ids.input.text.capitalize() == self.df['Dutch'][(self.word_order[self.i])]:
+        elif self.ids.input.text.capitalize() == self.df[self.input_language][(self.word_order[self.i])]:
             #print('correct')  # Feedback in console to check if it works, can be removed when it's no longer needed
             self.ids.origin_word.color = (0, 1, 0)  # Set textlabel color to green (RGB)
             self.ids.next.disabled = False  # Button for proceeding to next word will be enabled
@@ -110,14 +123,13 @@ class ExampleWidget(Screen):
 
     # Function for proceeding to next word
     def next_word(self):
-
         self.ids.next.disabled = True  # Button for proceeding to next word will be disabled
         self.ids.input.text = ''  # Clear text input widget
         self.ids.origin_word.color = (1, 1, 1)  # Set textlabel color to white (RGB)
-        self.ids.origin_word.text = self.df['Estonian'][(self.word_order[self.i])]  # Set textlabel text to new word
+        self.ids.origin_word.text = self.df[self.origin_language][(self.word_order[self.i])]  # Set textlabel text to new word
 
     def play_sound(self):
-        myobj = gTTS(text=self.ids.origin_word.text, lang='et', slow=False)
+        myobj = gTTS(text=self.ids.origin_word.text, lang=self.origin_language, slow=False)
         myobj.save("word.mp3")
         sound = SoundLoader.load('word.mp3')
         sound.play()
@@ -130,6 +142,7 @@ class ExampleWidget(Screen):
 # Menu screen class
 class Menu(Screen, BoxLayout):
     pass
+
 
 # Widget class for using multiple screens
 class WindowManager(ScreenManager):
